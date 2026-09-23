@@ -1,0 +1,47 @@
+# Prototype deployment
+
+Repository: https://github.com/MoonerZz/_ProjectAction
+
+Supabase project: `hqrhkhtzrmolbyhqgnwv`
+
+The repository is public. Never commit `.env.local`, database passwords, SMTP credentials, Supabase secret/service-role keys or hosting access tokens. Local environment files and Vercel CLI metadata are ignored by Git.
+
+## Database
+
+In the Supabase SQL editor, apply `supabase/migrations/0001_foundation.sql` to the fresh project, then `supabase/seed.sql`. The migration creates private profiles, private participation, read-only campaigns, ownership policies and aggregate-count triggers. The seed adds eight fictional campaigns.
+
+Do not rerun the initial migration over existing tables. Inspect the schema first. The seed uses `on conflict do nothing` and can be rerun without overwriting rows.
+
+## Vercel
+
+Import the repository using the Next.js framework preset and the repository root. Keep the lockfile and use the package manager specified in `package.json`.
+
+Configure the following environment variables for the deployment:
+
+| Variable | Value |
+| --- | --- |
+| `AUTH_MODE` | `supabase` |
+| `ALLOW_MOCK_AUTH` | `false` |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://hqrhkhtzrmolbyhqgnwv.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | The project's publishable key, entered directly in environment settings |
+| `APP_URL` | The final HTTPS production origin, with no trailing slash |
+
+No database password, service-role key or mock-session secret is needed by this deployment. Redeploy after environment changes. Use a development Supabase project for unrelated preview branches rather than changing the production callback to arbitrary preview URLs.
+
+## Authentication
+
+In Supabase Authentication URL Configuration:
+
+- Set Site URL to the same production origin as `APP_URL`.
+- Allow the exact production `/auth/callback` URL.
+- For local development, also allow `http://localhost:3000/auth/callback`.
+
+Keep email confirmation enabled. The normal Supabase confirmation URL in its email template supports the application's PKCE callback. Sign-in links should be opened in the same browser that requested them.
+
+Supabase's built-in sender is limited to project team email addresses. Configure an SMTP provider and verified sending domain before inviting other testers. Do not switch to mock authentication to bypass email-delivery setup on the public deployment.
+
+## Verify before sharing
+
+Check protected routes while signed out, then perform a real email sign-in. Verify profile creation, join/leave persistence, nickname updates and sign-out. Check isolation with two separate accounts and test on a real phone. Account deletion, notifications and proposal voting remain explicitly labelled placeholders. All campaign and representative content is fictional.
+
+The SQL migration and email-delivery configuration require authenticated Supabase dashboard access; the publishable key alone cannot administer them.

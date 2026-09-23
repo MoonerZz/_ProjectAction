@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en-GB">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><meta name="theme-color" content="{{theme}}" /><title>
+    Offline | {{name}}</title
+  ><style>
+    body {
+      margin: 0;
+      background: {{background}};
+      color: {{theme}};
+      font: 18px/1.6 system-ui;
+    }
+    main {
+      max-width: 620px;
+      margin: 12vh auto;
+      padding: 32px;
+    }
+    h1 {
+      font-size: 42px;
+      line-height: 1.15;
+    }
+    a {
+      color: #12675e;
+    }
+    nav {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .box {
+      padding: 24px;
+      background: white;
+      border: 1px solid #d7e0e4;
+      border-radius: 16px;
+    }
+    a:focus-visible {
+      outline: 3px solid #147369;
+      outline-offset: 5px;
+    }
+  </style>
+  <main>
+    <img src="/icon.svg" alt="" width="48" height="48" />
+    <p>{{name}} · OFFLINE</p>
+    <h1>Your civic space will be here when you reconnect.</h1>
+    <p>
+      You can read these participation principles offline. Reconnect to sign in,
+      see current information or update your actions.
+    </p>
+    <div class="box">
+      <h2>Take part on your terms</h2>
+      <p>
+        Keep participation peaceful, lawful and voluntary. Respect employees and
+        public services. Check original sources and meet existing legal
+        obligations.
+      </p>
+      <p>
+        Your private account and participation pages are not saved to the
+        offline cache. No changes are queued while offline.
+      </p>
+    </div>
+    <p><a href="/app">Try reconnecting →</a></p>
+    <nav aria-label="Reconnect destinations">
+      <a href="/app/actions">Actions</a
+      ><a href="/app/representatives">Representatives</a
+      ><a href="/app/profile">Profile</a>
+    </nav>
+  </main>
+</html>

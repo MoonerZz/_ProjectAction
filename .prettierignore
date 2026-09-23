@@ -1,0 +1,10 @@
+node_modules
+.next
+pnpm-lock.yaml
+test-results
+playwright-report
+public/icons
+AGENTS.md
+CLAUDE.md
+scripts/offline.template.html
+.pnpm-store
