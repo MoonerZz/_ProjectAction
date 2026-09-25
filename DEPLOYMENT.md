@@ -8,6 +8,8 @@ The repository is public. Never commit `.env.local`, database passwords, SMTP cr
 
 ## Database
 
+Already applied to this project on 23 September 2026: the foundation migration and eight fictional campaigns. The rollback-only checks in `supabase/tests/rls-smoke.sql` passed against the live database. Do not apply the initial migration again.
+
 In the Supabase SQL editor, apply `supabase/migrations/0001_foundation.sql` to the fresh project, then `supabase/seed.sql`. The migration creates private profiles, private participation, read-only campaigns, ownership policies and aggregate-count triggers. The seed adds eight fictional campaigns.
 
 Do not rerun the initial migration over existing tables. Inspect the schema first. The seed uses `on conflict do nothing` and can be rerun without overwriting rows.
