@@ -13,9 +13,11 @@ export default function Page() {
         <h2>Choose freely and check the facts</h2>
         <p>
           Participation is optional. Read original sources and your contractual
-          obligations before acting. All current campaigns, representatives and
-          financial information are fictional examples. This independent service
-          is not affiliated with Parliament, GOV.UK, IPSA or a political party.
+          obligations before acting. Campaigns are fictional examples.
+          Representative searches show official Parliament records, which may be
+          delayed or incomplete; consult the original source. This independent
+          service is not affiliated with Parliament, GOV.UK, IPSA or a political
+          party.
         </p>
         <h2>What this service supports</h2>
         <p>

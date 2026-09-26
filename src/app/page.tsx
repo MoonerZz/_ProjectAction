@@ -129,8 +129,8 @@ export default function Landing() {
           </Link>
         </section>
         <p className="landing-demo">
-          An early working prototype. All current campaign and representative
-          information is fictional demonstration data.
+          An early working prototype. Campaigns are fictional demonstration
+          data. Representative searches use official UK Parliament records.
         </p>
       </main>
       <Footer />

@@ -7,16 +7,12 @@ import {
   Users,
 } from "lucide-react";
 import { requireProfile } from "@/lib/auth/service";
-import {
-  actionsRepository,
-  representativesRepository,
-} from "@/lib/data/repositories";
-import { PageTitle, money, date } from "@/components/ui";
+import { actionsRepository } from "@/lib/data/repositories";
+import { PageTitle, date } from "@/components/ui";
 import { ActionCard } from "@/features/actions/action-card";
 export default async function Dashboard() {
   const profile = await requireProfile();
   const actions = await actionsRepository().list();
-  const mp = await representativesRepository.getPreview();
   const featured = actions.find((a) => a.status === "active");
   const upcoming = actions.find((a) => a.status === "scheduled");
   const joined = actions.filter((a) => a.joined).length;
@@ -75,71 +71,25 @@ export default async function Dashboard() {
         <section>
           <div className="section-heading">
             <h2>Your representative</h2>
-            <span className="tiny-label">DEMO</span>
+            <span className="tiny-label">OFFICIAL RECORDS</span>
           </div>
           <article className="panel representative-preview">
             <div className="rep-placeholder">
               <Landmark size={35} />
             </div>
-            <h3>{mp.name}</h3>
-            <p>{mp.constituency}</p>
-            <span className="field-help">{mp.party}</span>
-            <hr />
-            <div className="metric-line">
-              <span>Recorded voting participation</span>
-              <strong>
-                {Math.round(
-                  (mp.participation.recorded / mp.participation.total) * 100,
-                )}
-                %
-              </strong>
-            </div>
+            <h3>Find your MP</h3>
+            <p>
+              Look up a postcode or constituency to see official Parliament
+              records, recent votes and registered interests.
+            </p>
             <p className="field-help">
-              {mp.participation.recorded} of {mp.participation.total} example
-              divisions
+              Your search is not saved to your account.
             </p>
             <Link className="button secondary full" href="/app/representatives">
-              Meet your representative <ArrowUpRight size={16} />
+              Find your representative <ArrowUpRight size={16} />
             </Link>
           </article>
         </section>
-      </div>
-      <div className="grid two">
-        <article className="panel">
-          <div className="section-heading">
-            <h2>In the voting record</h2>
-            <Landmark size={20} />
-          </div>
-          <span className="field-help">
-            Latest fictional division · {date(mp.votes[0].date)}
-          </span>
-          <h3>{mp.votes[0].title}</h3>
-          <div className="vote-line">
-            <span>{mp.name}</span>
-            <span className="status active">
-              Voted {mp.votes[0].position.toLowerCase()}
-            </span>
-          </div>
-          <Link className="text-link" href="/app/representatives#votes">
-            Explore recent votes <ArrowUpRight size={16} />
-          </Link>
-        </article>
-        <article className="panel">
-          <div className="section-heading">
-            <h2>Public money, in context</h2>
-            <span className="tiny-label">2025–26 · DEMO</span>
-          </div>
-          <div className="expense-number">
-            {money(Object.values(mp.costs).reduce((a, b) => a + b, 0))}
-          </div>
-          <p>
-            Example publicly funded business costs. These support an MP’s work
-            and are not personal income.
-          </p>
-          <Link className="text-link" href="/app/representatives#costs">
-            See the breakdown <ArrowUpRight size={16} />
-          </Link>
-        </article>
       </div>
     </>
   );

@@ -45,8 +45,8 @@ export function DemoNotice() {
     <div className="demo-notice">
       <ShieldCheck size={17} />
       <span>
-        <strong>Demonstration only.</strong> All campaigns, representatives and
-        financial figures are fictional.
+        <strong>Prototype.</strong> Campaigns are fictional. Representative
+        searches use official UK Parliament records.
       </span>
     </div>
   );

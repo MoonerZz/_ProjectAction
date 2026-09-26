@@ -4,9 +4,9 @@ A privacy-first, politically neutral UK civic participation PWA foundation. Buil
 
 ## Scope
 
-This version includes a public landing page, magic-link registration and login, protected dashboard, eight fictional campaigns, search and filters, private join/leave participation, representative transparency previews and account settings. It includes installable PWA metadata, PNG icons and a public offline shell. No Parliament or IPSA API is connected.
+This version includes a public landing page, magic-link registration and login, protected dashboard, eight fictional campaigns, search and filters, private join/leave participation, live Parliament representative lookup and account settings. It includes installable PWA metadata, PNG icons and a public offline shell. The Parliament Members API supplies MP lookup, recent votes and registered interests. IPSA business-cost data is not connected.
 
-Voting on proposals, notifications, campaign submissions, and comments are **not implemented**. Their placeholders are explicitly labelled. The postcode field is an unsaved, untransmitted UI placeholder. All organisations, representatives, constituencies, figures and evidence summaries are fictional. Seed dates are fixed demonstration dates, not a live schedule.
+Voting on proposals, notifications, campaign submissions, and comments are **not implemented**. Their placeholders are explicitly labelled. Representative searches are submitted to Parliament through a server action and are not stored in profiles or the database. Campaign organisations and evidence remain fictional. Seed dates are fixed demonstration dates, not a live schedule.
 
 ## Local setup
 
@@ -58,7 +58,7 @@ src/app/                    Routes, layouts, metadata and callback
 src/components/             Shared shell, navigation and UI
 src/features/auth/          Auth forms, profile controls and server actions
 src/features/actions/       Browsing, cards, confirmation and participation rules
-src/features/representatives/ Postcode placeholder
+src/features/representatives/ Live Parliament lookup and server actions
 src/lib/auth/               AuthService, mock session and Supabase SSR adapter
 src/lib/data/               ActionsRepository and RepresentativesRepository adapters
 src/lib/validation/         Shared input validation
@@ -69,7 +69,7 @@ public/                     Service worker, offline page and install icons
 tests/                      Unit and production-browser smoke tests
 ```
 
-`AuthService` separates account UI from identity providers. `ActionsRepository` separates campaign UI from data and private participation. `RepresentativesRepository` currently has only a mock implementation; there is intentionally no permanent representative database schema. React escapes user-visible text, server actions validate inputs independently of browser constraints, and Supabase uses parameterised client operations.
+`AuthService` separates account UI from identity providers. `ActionsRepository` separates campaign UI from data and private participation. The Parliament adapter in `src/lib/parliament.ts` validates responses, uses a ten-second timeout, avoids caching location searches, and caches public records by MP ID with hourly revalidation. There is no permanent representative database schema. React escapes user-visible text, server actions validate inputs independently of browser constraints, and Supabase uses parameterised client operations.
 
 ## Checks
 
@@ -97,7 +97,7 @@ There are no analytics or third-party fonts. Focus styles, native form labels, s
 - **Register of Interests:** preserve the original categories, reporting dates, descriptions and source links rather than deriving unsupported financial conclusions.
 - **IPSA:** show reporting periods, corrections and categories of publicly funded business costs. Keep these separate from personal income.
 
-Review official API fields and licences before designing permanent representative tables. Use server-side adapters with provenance, bounded caching, retries and explicit stale/error states. Do not log postcode values; any future lookup needs a documented purpose and privacy review. Required future attribution:
+Review official API fields and licences before designing permanent representative tables. Use server-side adapters with provenance, bounded caching, retries and explicit stale/error states. Do not log postcode values; lookup privacy wording is included in the form and privacy notice. Attribution:
 
 > Contains Parliamentary information licensed under the Open Parliament Licence v3.0.
 
@@ -108,3 +108,9 @@ Implementation references: [Next.js App Router](https://nextjs.org/docs/app), [S
 Only peaceful, lawful, voluntary and non-destructive civic or consumer action is supported. No harassment, threats, targeting employees, trespass, vandalism, obstruction, withholding legal payments, fake reviews, bogus reports, automated message flooding, denial of service, disruption of essential services or doxxing. Joining never sends messages, cancels subscriptions or takes external action automatically.
 
 The service is independent of Parliament, GOV.UK, IPSA and every political party. Draft privacy and terms pages require operator details, retention rules, lawful-basis review, processor disclosures and functioning rights/deletion processes before launch. Production also needs real email configuration, abuse protection/rate-limit configuration, monitoring that avoids sensitive data, and independent security/accessibility review. No live official-data accuracy claims are made.
+
+## Live Parliament integration
+
+No new credentials, paid API plan or database migration is required. Searches are authenticated POST server actions; their text is not placed in the app URL, persisted, or deliberately logged. Queries go to Parliament and may be processed in provider logs. MP selection is transient. Multiple matches require selection, empty results explain possible vacancies, and failed vote/interest feeds are distinct from empty records. Official motion titles are preserved; this is not an attendance or political-position score. Original records and the Open Parliament Licence are linked. Public record caching may serve older records during upstream outages.
+
+Run the opt-in upstream browser check with `PARLIAMENT_LIVE_TEST=true` and `pnpm test:e2e` (PowerShell: `$env:PARLIAMENT_LIVE_TEST="true"`). It uses the public Parliament postcode SW1A 0AA, not personal location data.

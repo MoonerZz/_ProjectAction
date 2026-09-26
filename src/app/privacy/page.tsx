@@ -21,8 +21,12 @@ export default function Page() {
         <p>
           We do not request a real name, date of birth, phone number, home
           address, photo or government ID, precise location or political
-          affiliation. The postcode preview neither saves nor transmits what you
-          type.
+          affiliation. Representative searches send your postcode or
+          constituency name through our hosting provider to UK Parliament. We do
+          not save searches to your profile or database, cache postcode queries,
+          or deliberately include them in application logs. Parliament and
+          hosting providers may process technical request data. Public MP
+          records are cached separately by MP ID.
         </p>
         <h2>Local mock mode</h2>
         <p>

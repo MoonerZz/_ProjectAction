@@ -1,7 +1,6 @@
 import "server-only";
-import type { CivicAction, Representative } from "@/types";
+import type { CivicAction } from "@/types";
 import { seedActions } from "@/mock-data/actions";
-import { representative } from "@/mock-data/representatives";
 import { authMode } from "@/lib/auth/config";
 import { readMock, writeMock } from "@/lib/auth/mock-session";
 import { requireProfile } from "@/lib/auth/service";
@@ -11,14 +10,6 @@ export interface ActionsRepository {
   list(): Promise<CivicAction[]>;
   get(id: string): Promise<CivicAction | undefined>;
   participate(id: string, join: boolean): Promise<void>;
-}
-export interface RepresentativesRepository {
-  getPreview(): Promise<Representative>;
-}
-export class MockRepresentativesRepository implements RepresentativesRepository {
-  async getPreview() {
-    return representative;
-  }
 }
 export class MockActionsRepository implements ActionsRepository {
   async list() {
@@ -90,5 +81,3 @@ export function actionsRepository(): ActionsRepository {
     ? new MockActionsRepository()
     : new SupabaseActionsRepository();
 }
-export const representativesRepository: RepresentativesRepository =
-  new MockRepresentativesRepository();

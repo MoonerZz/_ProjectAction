@@ -188,9 +188,9 @@ test("account deletion requires confirmation and ends the session", async ({
   await page
     .getByRole("button", { name: "Permanently delete my account" })
     .click();
-  await expect(page.getByRole("alert").filter({ hasText: "Type DELETE" })).toHaveText(
-    "Type DELETE to confirm permanent account deletion.",
-  );
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Type DELETE" }),
+  ).toHaveText("Type DELETE to confirm permanent account deletion.");
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
     await page.evaluate(
@@ -206,4 +206,50 @@ test("account deletion requires confirmation and ends the session", async ({
   ).toBeVisible();
   await page.goto("/app/profile");
   await expect(page).toHaveURL(/\/login/);
+});
+
+test("live Parliament lookup works without putting the postcode in the URL", async ({
+  page,
+}) => {
+  test.skip(
+    process.env.PARLIAMENT_LIVE_TEST !== "true",
+    "Opt-in live upstream check",
+  );
+  await page.goto("/signup");
+  await page
+    .getByLabel("Email address", { exact: false })
+    .fill("parliament-test@example.invalid");
+  await page
+    .getByLabel("Public nickname", { exact: false })
+    .fill("Parliament Test");
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Continue in mock mode" }).click();
+  await page
+    .getByRole("button", { name: "Developer: simulate sign-in" })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Hello, Parliament Test." }),
+  ).toBeVisible();
+  await page
+    .getByRole("link", { name: "Representatives", exact: true })
+    .click();
+  await page.getByLabel("Postcode or constituency name").fill("SW1A 0AA");
+  await page.getByRole("button", { name: "Find MP", exact: true }).click();
+  await expect(
+    page.getByText("UK PARLIAMENT RECORD", { exact: true }),
+  ).toBeVisible({ timeout: 25000 });
+  await expect(
+    page.getByRole("link", { name: "Full official voting record" }),
+  ).toHaveAttribute("href", /members.parliament.uk\/member\/\d+\/voting/);
+  expect(page.url()).not.toContain("SW1A");
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: "test-results/parliament-mobile.png",
+    fullPage: true,
+  });
 });
