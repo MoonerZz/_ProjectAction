@@ -4,7 +4,7 @@ import { requireProfile } from "@/lib/auth/service";
 import { actionsRepository } from "@/lib/data/repositories";
 import {
   ProfileControls,
-  DeletionPlaceholder,
+  AccountDeletion,
 } from "@/features/auth/profile-controls";
 import { signOut } from "@/features/auth/server-actions";
 export default async function Page() {
@@ -68,7 +68,7 @@ export default async function Page() {
           </Empty>
         )}
       </section>
-      <DeletionPlaceholder />
+      <AccountDeletion />
     </>
   );
 }

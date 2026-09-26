@@ -12,6 +12,23 @@ import {
 } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
 export type FormState = { error?: string; success?: string };
+export async function deleteAccount(
+  _: FormState,
+  form: FormData,
+): Promise<FormState> {
+  await requireProfile();
+  if (form.get("confirmation") !== "DELETE") {
+    return { error: "Type DELETE to confirm permanent account deletion." };
+  }
+  try {
+    await authService().deleteAccount();
+  } catch {
+    return { error: "Your account could not be deleted. Please try again." };
+  }
+  (await cookies()).delete("civic_pending");
+  revalidatePath("/app", "layout");
+  redirect("/account-deleted");
+}
 export async function requestLink(
   _: FormState,
   form: FormData,

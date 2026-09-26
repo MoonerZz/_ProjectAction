@@ -67,13 +67,10 @@ test("mock registration, private participation and profile flow", async ({
     page.getByRole("heading", { name: "You’re part of this action." }),
   ).toBeVisible();
   await page.getByRole("link", { name: "Profile", exact: true }).click();
-  await page.getByRole("button", { name: "Request account deletion" }).click();
   await page
-    .getByRole("button", { name: "Confirm placeholder request" })
+    .getByRole("button", { name: "Delete account", exact: true })
     .click();
-  await expect(
-    page.getByText("Preview complete.", { exact: false }),
-  ).toBeVisible();
+  await page.getByRole("button", { name: "Cancel", exact: true }).click();
   await expect(
     page.getByText("neighbour@example.com", { exact: false }),
   ).toBeVisible();
@@ -155,4 +152,58 @@ test("public offline shell is available without retaining private pages", async 
   });
   expect(cached).not.toContain("/app");
   expect(cached).toContain("/offline.html");
+});
+
+test("account deletion requires confirmation and ends the session", async ({
+  page,
+}) => {
+  await page.goto("/signup");
+  await page
+    .getByLabel("Email address", { exact: false })
+    .fill("delete-test@example.invalid");
+  await page
+    .getByLabel("Public nickname", { exact: false })
+    .fill("Delete Test");
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Continue in mock mode" }).click();
+  await page
+    .getByRole("button", { name: "Developer: simulate sign-in" })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Hello, Delete Test." }),
+  ).toBeVisible();
+  await page.goto("/app/profile");
+  await page
+    .getByRole("button", { name: "Delete account", exact: true })
+    .click();
+  await page.getByLabel("Type DELETE to confirm").fill("wrong");
+  await page
+    .getByRole("button", { name: "Permanently delete my account" })
+    .click();
+  await expect(page).toHaveURL(/app\/profile/);
+  // Bypass browser validation to exercise the server's independent guard.
+  await page
+    .getByLabel("Type DELETE to confirm")
+    .evaluate((input) => input.removeAttribute("pattern"));
+  await page
+    .getByRole("button", { name: "Permanently delete my account" })
+    .click();
+  await expect(page.getByRole("alert").filter({ hasText: "Type DELETE" })).toHaveText(
+    "Type DELETE to confirm permanent account deletion.",
+  );
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.getByLabel("Type DELETE to confirm").fill("DELETE");
+  await page
+    .getByRole("button", { name: "Permanently delete my account" })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Your account has been deleted." }),
+  ).toBeVisible();
+  await page.goto("/app/profile");
+  await expect(page).toHaveURL(/\/login/);
 });

@@ -9,8 +9,13 @@ export interface AuthService {
   requestLink(email: string, nickname?: string): Promise<void>;
   updateNickname(nickname: string): Promise<void>;
   signOut(): Promise<void>;
+  deleteAccount(): Promise<void>;
 }
 class MockAuthService implements AuthService {
+  async deleteAccount() {
+    if (!(await readMock())) throw new Error("Sign in again.");
+    await clearMock();
+  }
   async getProfile() {
     return (await readMock())?.profile || null;
   }
@@ -29,6 +34,20 @@ class MockAuthService implements AuthService {
   }
 }
 class SupabaseAuthService implements AuthService {
+  async deleteAccount() {
+    const client = await supabase();
+    const {
+      data: { user },
+      error: authError,
+    } = await client.auth.getUser();
+    if (authError || !user) throw new Error("Sign in again.");
+    const { error } = await client.rpc("delete_own_account");
+    if (error)
+      throw new Error("Your account could not be deleted. Please try again.");
+    // The account is already gone. Local logout clears this browser's cookies;
+    // the database cascade removes server sessions and refresh tokens.
+    await client.auth.signOut({ scope: "local" });
+  }
   async getProfile() {
     const client = await supabase();
     const {

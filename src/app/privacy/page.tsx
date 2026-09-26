@@ -49,9 +49,10 @@ export default function Page() {
         <p>
           The operator must publish their identity, contact details, lawful
           bases, retention periods, processor and transfer information, and
-          procedures for access, correction, deletion and complaints. Account
-          deletion is currently a clearly labelled preview; no request is
-          submitted.
+          procedures for access, correction, deletion and complaints. You can
+          permanently delete your account, profile and private participation
+          from your profile page. Campaign totals are updated. Provider backups
+          and technical logs may remain until their retention periods end.
         </p>
       </main>
       <Footer />

@@ -1,6 +1,6 @@
 "use client";
 import { useActionState, useState } from "react";
-import { updateNickname } from "./server-actions";
+import { deleteAccount, updateNickname } from "./server-actions";
 export function ProfileControls({ nickname }: { nickname: string }) {
   const [state, action, pending] = useActionState(updateNickname, {});
   return (
@@ -34,40 +34,60 @@ export function ProfileControls({ nickname }: { nickname: string }) {
     </form>
   );
 }
-export function DeletionPlaceholder() {
-  const [stage, setStage] = useState(0);
+export function AccountDeletion() {
+  const [confirming, setConfirming] = useState(false);
+  const [state, action, pending] = useActionState(deleteAccount, {});
   return (
     <section className="panel deletion">
       <h2>Your account, your choice</h2>
       <p>
-        Account deletion is a placeholder in this prototype. This flow does not
-        submit a request or delete data.
+        Delete your sign-in account, profile and private participation records.
+        Campaign totals will be updated. This cannot be undone.
       </p>
-      {stage === 0 ? (
-        <button className="button secondary" onClick={() => setStage(1)}>
-          Request account deletion
+      <p>
+        Provider backups and technical logs may remain until their retention
+        periods end.
+      </p>
+      {!confirming ? (
+        <button
+          className="button secondary"
+          onClick={() => setConfirming(true)}
+        >
+          Delete account
         </button>
-      ) : stage === 1 ? (
-        <div>
-          <h3>Preview account deletion?</h3>
-          <p>
-            A future deletion service will remove your profile and private
-            participation history. No request will be sent in this preview.
-          </p>
+      ) : (
+        <form action={action} className="form">
+          <h3>Permanently delete your account?</h3>
+          <label>
+            Type DELETE to confirm
+            <input
+              name="confirmation"
+              required
+              pattern="DELETE"
+              autoComplete="off"
+              spellCheck={false}
+              disabled={pending}
+            />
+          </label>
           <div className="button-row">
-            <button className="button" onClick={() => setStage(2)}>
-              Confirm placeholder request
+            <button className="button" disabled={pending}>
+              {pending ? "Deleting…" : "Permanently delete my account"}
             </button>
-            <button className="button secondary" onClick={() => setStage(0)}>
+            <button
+              type="button"
+              className="button secondary"
+              disabled={pending}
+              onClick={() => setConfirming(false)}
+            >
               Cancel
             </button>
           </div>
-        </div>
-      ) : (
-        <p role="status" className="notice">
-          Preview complete. Nothing was submitted or deleted. In mock mode,
-          signing out removes the current mock session and participation.
-        </p>
+          {state.error && (
+            <p className="error-message" role="alert">
+              {state.error}
+            </p>
+          )}
+        </form>
       )}
     </section>
   );

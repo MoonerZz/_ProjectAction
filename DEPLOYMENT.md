@@ -44,6 +44,10 @@ Supabase's built-in sender is limited to project team email addresses. Configure
 
 ## Verify before sharing
 
-Check protected routes while signed out, then perform a real email sign-in. Verify profile creation, join/leave persistence, nickname updates and sign-out. Check isolation with two separate accounts and test on a real phone. Account deletion, notifications and proposal voting remain explicitly labelled placeholders. All campaign and representative content is fictional.
+Check protected routes while signed out, then perform a real email sign-in. Verify profile creation, join/leave persistence, nickname updates and sign-out. Check isolation with two separate accounts and test on a real phone. Notifications and proposal voting remain explicitly labelled placeholders. All campaign and representative content is fictional.
 
 The SQL migration and email-delivery configuration require authenticated Supabase dashboard access; the publishable key alone cannot administer them.
+
+## Account deletion update — 26 September 2026
+
+Migration `0002_account_deletion.sql` is applied. The rollback-only test `supabase/tests/account-deletion.sql` passed for caller-only deletion, profile/participation cascades, aggregate counts, anonymous and missing-identity denial, replay denial and stale-token data denial. No existing accounts were deleted. No extra environment variable or administrator key is needed.
