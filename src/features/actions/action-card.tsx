@@ -45,6 +45,9 @@ export function ActionCard({
       <h3>
         <Link href={`/app/actions/${action.id}`}>{action.title}</Link>
       </h3>
+      {action.is_demo !== false && (
+        <span className="eyebrow">Demo campaign</span>
+      )}
       <p>{action.summary}</p>
       <ActionProgress action={action} />
       <div className="card-bottom">

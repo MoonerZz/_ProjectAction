@@ -11,6 +11,7 @@ export interface Profile {
   terms_accepted_at: string;
 }
 export interface CivicAction {
+  is_demo?: boolean;
   id: string;
   title: string;
   summary: string;

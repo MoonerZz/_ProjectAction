@@ -39,7 +39,11 @@ export class SupabaseActionsRepository implements ActionsRepository {
     const client = await supabase();
     const [{ data, error }, { data: participation, error: joinError }] =
       await Promise.all([
-        client.from("actions").select("*").order("created_at"),
+        client
+          .from("actions")
+          .select("*")
+          .not("published_at", "is", null)
+          .order("created_at"),
         client
           .from("action_participation")
           .select("action_id")

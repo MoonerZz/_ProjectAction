@@ -4,6 +4,7 @@ import { authMode } from "@/lib/auth/config";
 import { signOut } from "@/features/auth/server-actions";
 import { Logo, DemoNotice } from "@/components/ui";
 import { AppNav } from "@/components/app-nav";
+import { isAdmin } from "@/features/admin/service";
 export const dynamic = "force-dynamic";
 export default async function Layout({
   children,
@@ -33,7 +34,7 @@ export default async function Layout({
       </header>
       <aside className="sidebar">
         <span className="nav-caption">YOUR CIVIC SPACE</span>
-        <AppNav />
+        <AppNav admin={await isAdmin()} />
         <div className="sidebar-bottom">
           <ShieldCheck size={22} />
           <strong>Your participation is private.</strong>

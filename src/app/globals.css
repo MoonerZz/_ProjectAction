@@ -1498,6 +1498,63 @@ hr {
     font-size: 1rem;
   }
 }
+.admin-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+.admin-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.admin-row h2 {
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+.admin-editor {
+  max-width: 800px;
+}
+.admin-editor textarea,
+.admin-editor select {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #d9e0db;
+  border-radius: 8px;
+  font: inherit;
+  color: inherit;
+  background: white;
+}
+.admin-editor textarea {
+  resize: vertical;
+}
+.admin-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.admin-columns label {
+  min-width: 0;
+}
+.admin-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+@media (max-width: 600px) {
+  .admin-columns {
+    grid-template-columns: 1fr;
+  }
+  .admin-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .admin-buttons .button {
+    width: 100%;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

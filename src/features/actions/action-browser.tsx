@@ -60,8 +60,7 @@ export function ActionBrowser({ actions }: { actions: CivicAction[] }) {
         <SlidersHorizontal size={20} />
       </div>
       <p className="field-help" role="status">
-        {filtered.length} actions · All campaigns and organisations are
-        fictional
+        {filtered.length} actions · Sample campaigns are labelled as demos
       </p>
       {filtered.length ? (
         <div className="grid two">

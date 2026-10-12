@@ -20,13 +20,13 @@ Import the repository using the Next.js framework preset and the repository root
 
 Configure the following environment variables for the deployment:
 
-| Variable | Value |
-| --- | --- |
-| `AUTH_MODE` | `supabase` |
-| `ALLOW_MOCK_AUTH` | `false` |
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://hqrhkhtzrmolbyhqgnwv.supabase.co` |
+| Variable                               | Value                                                                   |
+| -------------------------------------- | ----------------------------------------------------------------------- |
+| `AUTH_MODE`                            | `supabase`                                                              |
+| `ALLOW_MOCK_AUTH`                      | `false`                                                                 |
+| `NEXT_PUBLIC_SUPABASE_URL`             | `https://hqrhkhtzrmolbyhqgnwv.supabase.co`                              |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | The project's publishable key, entered directly in environment settings |
-| `APP_URL` | The final HTTPS production origin, with no trailing slash |
+| `APP_URL`                              | The final HTTPS production origin, with no trailing slash               |
 
 No database password, service-role key or mock-session secret is needed by this deployment. Redeploy after environment changes. Use a development Supabase project for unrelated preview branches rather than changing the production callback to arbitrary preview URLs.
 
@@ -55,3 +55,13 @@ Migration `0002_account_deletion.sql` is applied. The rollback-only test `supaba
 ## Parliament lookup — 26 September 2026
 
 No additional environment variables or database changes. Outbound HTTPS to `members-api.parliament.uk` is required. Public MP data uses hourly revalidation; postcode/constituency queries are not cached. Eight unit tests and five browser tests passed, including a real Parliament lookup and mobile layout check.
+
+## Admin actions — 12 October 2026
+
+Generate the one-time setup with `node scripts/prepare-admin-setup.mjs EXISTING_ADMIN_EMAIL OUTPUT.sql`, then run that output once in the Supabase SQL editor. It combines migration 0003, rollback-only permission checks and the initial admin grant in a single transaction. The bootstrap refuses to proceed if a different admin already exists. Keep generated scripts containing the owner's email outside the repository. No admin role can be granted from the app or from user-editable metadata.
+
+Deploy the admin commit after migration and bootstrap succeed. The Admin navigation item appears only for a current database admin. Admins can create and edit drafts, publish after reviewing evidence and safety, and unpublish without deleting participation. Members see only published actions. Participation counts and membership grants cannot be changed through the app. Revisions reject concurrent edits. Existing campaigns remain published and are labelled as demos; newly created actions start as real, private drafts.
+
+No new Vercel variables or service-role key are needed. Email-code login and session changes are on hold pending custom SMTP.
+
+Validate with `pnpm test`, `pnpm test:db`, `pnpm lint`, `pnpm build`, `pnpm test:e2e` and `pnpm test:e2e:admin`. The admin browser suite uses a localhost-only Supabase protocol fixture; the SQL suite uses an isolated PGlite PostgreSQL instance and separately verifies row-level security with a minimal Auth schema fixture. Live database setup and a production admin sign-in remain separate release checks.

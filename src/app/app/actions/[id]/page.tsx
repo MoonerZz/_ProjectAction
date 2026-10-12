@@ -48,23 +48,32 @@ export default async function Page({
             ))}
           </ul>
           <h3>Evidence & sources</h3>
-          {action.sources.map((source) => (
-            <p className="source-placeholder" key={source.label}>
-              {source.label} · Placeholder, no live evidence available
+          {action.sources.map((source, index) => (
+            <p className="source-placeholder" key={index}>
+              {source.url?.startsWith("https://") ? (
+                <a href={source.url} target="_blank" rel="noopener noreferrer">
+                  {source.label} ↗
+                </a>
+              ) : (
+                <>{source.label} · Placeholder, no live evidence available</>
+              )}
             </p>
           ))}
-          <p className="field-help">
-            This is a fictional campaign for demonstrating the interface, not a
-            verified real-world allegation.
-          </p>
+          {action.is_demo !== false && (
+            <p className="field-help">
+              This is a fictional campaign for demonstrating the interface, not
+              a verified real-world allegation.
+            </p>
+          )}
         </section>
         <aside>
           <section className="panel">
             <h2>Shared participation</h2>
             <ActionProgress action={action} />
             <p className="field-help">
-              Demonstration counts. The threshold illustrates interest; it does
-              not automatically trigger any action.
+              {action.is_demo !== false ? "Demonstration counts. " : ""}The
+              threshold illustrates interest; it does not automatically trigger
+              any action.
             </p>
             <hr />
             <JoinForm key={String(action.joined)} action={action} />

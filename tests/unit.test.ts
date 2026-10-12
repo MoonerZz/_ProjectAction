@@ -1,5 +1,45 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { actionInput } from "../src/features/admin/validation";
+function adminForm() {
+  const form = new FormData();
+  Object.entries({
+    title: "Better local access",
+    summary: "Improve access to our local services.",
+    target: "Local council",
+    demand: "Publish a clear plan for accessible local services.",
+    action_type: "Local council action",
+    status: "proposed",
+    starts_at: "2026-11-01",
+    ends_at: "2026-11-10",
+    participation_threshold: "100",
+    safety_notes: "Participate peacefully and lawfully.",
+    alternatives: "Write to your representative.",
+    sources: "Council records | https://example.org/records",
+  }).forEach(([key, value]) => form.set(key, value));
+  return form;
+}
+test("admin actions reject unsafe links, invalid dates and forged counts", () => {
+  const form = adminForm();
+  form.set("participant_count", "999");
+  form.set("is_admin", "true");
+  const input = actionInput(form);
+  assert.equal("participant_count" in input, false);
+  assert.equal("is_admin" in input, false);
+  assert.equal(input.sources[0].url, "https://example.org/records");
+  for (const [field, value] of [
+    ["sources", "Bad | javascript:alert(1)"],
+    ["sources", "Bad | https://user:password@example.org"],
+    ["starts_at", "2026-02-30"],
+    ["ends_at", "2026-01-01"],
+    ["participation_threshold", "1.2"],
+    ["status", "invented"],
+  ]) {
+    const invalid = adminForm();
+    invalid.set(field, value);
+    assert.throws(() => actionInput(invalid));
+  }
+});
 import {
   emailError,
   nicknameError,
